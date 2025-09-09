@@ -1,0 +1,113 @@
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - id: portosync
+    main: ./cmd/portosync
+    binary: portosync
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    goarm:
+      - "7"
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X github.com/chickenzord/portosync/internal/version.Version={{.Version}}
+      - -X github.com/chickenzord/portosync/internal/version.GitCommit={{.FullCommit}}
+      - -X github.com/chickenzord/portosync/internal/version.BuildDate={{.Date}}
+    mod_timestamp: '{{ .CommitTimestamp }}'
+
+archives:
+  - id: default
+    # this name template makes the OS and Arch compatible with the results of uname.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+      - goos: linux
+        format: tar.gz
+      - goos: darwin
+        format: tar.gz
+    files:
+      - README.md
+      - LICENSE
+      - examples/*
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^ci:'
+      - '^nit:'
+      - '^chore:'
+      - '^build:'
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: Features
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: 'Bug fixes'
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 1
+    - title: 'Enhancements'
+      regexp: "^.*enhancement[(\\w)]*:+.*$"
+      order: 2
+    - title: Others
+      order: 999
+
+# Release configuration
+release:
+  draft: false
+  prerelease: auto
+  mode: replace
+  header: |
+    ## Portosync {{ .Tag }}
+
+    Portosync is a server for getting investment portfolios and exposing them through the Model Context Protocol (MCP) interface.
+
+    ### Installation
+
+    **Binary Download:**
+    Download the appropriate binary for your platform from the assets below.
+
+    **Go Install:**
+    ```bash
+    go install github.com/chickenzord/portosync/cmd/portosync@{{ .Tag }}
+    ```
+
+    **Docker:**
+    ```bash
+    docker pull ghcr.io/chickenzord/portosync:{{ .Tag }}
+    ```
+  footer: |
+    **Full Changelog**: https://github.com/chickenzord/portosync/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+# Universal binaries for macOS
+universal_binaries:
+  - replace: false
+
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
