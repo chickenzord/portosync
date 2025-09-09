@@ -45,7 +45,8 @@ func main() {
 	}
 
 	for name := range kseiAccounts {
-		fmt.Printf("Loaded KSEI account: %s\n", name)
+		// Log to stderr because stdout reserved for MCP protocol communication
+		fmt.Fprintf(os.Stderr, "Loaded KSEI account: %s\n", name)
 	}
 
 	mcpServer := server.NewMCP(kseiAccounts, kseiPlainPassword, kseiAuthCacheDir)
