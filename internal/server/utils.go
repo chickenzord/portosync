@@ -35,8 +35,8 @@ func getAllBalances(clients map[string]*goksei.Client) ([]Balance, error) {
 				mu.Lock()
 
 				for _, b := range res.Data {
-					balances = append(balances, Balance{
-						SourceType:    "ksei",
+					balance := Balance{
+						SourceType:    "ksei", // TODO: generalize this for other source
 						SourceAccount: accountName,
 						AssetSymbol:   b.Symbol(),
 						AssetName:     b.Name(),
@@ -44,7 +44,15 @@ func getAllBalances(clients map[string]*goksei.Client) ([]Balance, error) {
 						UnitsCurrency: b.Currency,
 						UnitsAmount:   b.Amount,
 						UnitsValue:    b.CurrentValue(),
-					})
+					}
+
+					mutualFund, ok := goksei.MutualFundByCode(b.Symbol())
+					if ok {
+						balance.AssetName = mutualFund.ProductName
+						balance.AssetSubType = mutualFund.FundType
+					}
+
+					balances = append(balances, balance)
 				}
 
 				mu.Unlock()

@@ -94,7 +94,7 @@ func NewMCP(accounts map[string]string, plainPassword bool, authCacheDir string)
 	// Add get_portfolio tool
 	mcp.AddTool(mcpServer, &mcp.Tool{
 		Name:        "get_portfolio",
-		Description: "Get consolidated portfolio from Portosync",
+		Description: "Get investment portfolio from available sources (AKSES-KSEI)",
 	}, s.handleGetPortfolio)
 
 	s.mcpServer = mcpServer
