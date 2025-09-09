@@ -15,6 +15,16 @@ func main() {
 	bindAddr := os.Getenv("BIND_ADDR")
 	kseiAccounts := parseKseiAccountsString(os.Getenv("KSEI_ACCOUNTS"))
 	kseiPlainPassword := os.Getenv("KSEI_PLAIN_PASSWORD") != "false" // default to true
+	kseiAuthCacheDir := os.Getenv("KSEI_AUTH_CACHE_DIR")
+
+	if kseiAuthCacheDir == "" {
+		dir, err := os.MkdirTemp("", "portosync_ksei_auth")
+		if err != nil {
+			panic(err)
+		}
+
+		kseiAuthCacheDir = dir
+	}
 
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "Usage: %s <command>\n", os.Args[0])
@@ -38,7 +48,7 @@ func main() {
 		fmt.Printf("Loaded KSEI account: %s\n", name)
 	}
 
-	mcpServer := server.NewMCP(kseiAccounts, kseiPlainPassword)
+	mcpServer := server.NewMCP(kseiAccounts, kseiPlainPassword, kseiAuthCacheDir)
 
 	switch command {
 	case "mcp-http":

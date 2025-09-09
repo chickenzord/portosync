@@ -4,7 +4,6 @@ import (
 	"context"
 	"maps"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -63,13 +62,8 @@ func (m *MCP) RunStdio(ctx context.Context) error {
 }
 
 // NewMCP creates a new MCP server using the official MCP Go SDK
-func NewMCP(accounts map[string]string, plainPassword bool) *MCP {
-	tempDir, err := os.MkdirTemp("", "portosync")
-	if err != nil {
-		panic(err)
-	}
-
-	authStore, err := goksei.NewFileAuthStore(tempDir)
+func NewMCP(accounts map[string]string, plainPassword bool, authCacheDir string) *MCP {
+	authStore, err := goksei.NewFileAuthStore(authCacheDir)
 	if err != nil {
 		panic(err)
 	}
