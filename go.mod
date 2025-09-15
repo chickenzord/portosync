@@ -3,7 +3,7 @@ module github.com/chickenzord/portosync
 go 1.25.0
 
 require (
-	github.com/chickenzord/goksei v0.11.0
+	github.com/chickenzord/goksei v0.12.0
 	github.com/modelcontextprotocol/go-sdk v0.4.0
 	golang.org/x/sync v0.17.0
 )
