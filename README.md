@@ -46,13 +46,13 @@ docker pull ghcr.io/chickenzord/portosync:latest
 
 # Run in stdio mode (for MCP clients)
 docker run --rm -i \
-  -e KSEI_ACCOUNTS="email1:pass1,email2:pass2" \
+  -e KSEI_ACCOUNTS="personal:email1@example.com:pass1,business:email2@example.com:pass2" \
   -e KSEI_AUTH_CACHE_DIR="/tmp/ksei_cache" \
   ghcr.io/chickenzord/portosync:latest mcp-stdio
 
-# Run in HTTP mode  
+# Run in HTTP mode
 docker run --rm -p 8080:8080 \
-  -e KSEI_ACCOUNTS="account1:user1:pass1,account2:user2:pass2" \
+  -e KSEI_ACCOUNTS="personal:user1@example.com:pass1,business:user2@example.com:pass2" \
   -e KSEI_AUTH_CACHE_DIR="/tmp/ksei_cache" \
   -e BIND_ADDR=":8080" \
   ghcr.io/chickenzord/portosync:latest mcp-http
@@ -76,7 +76,7 @@ go build -o portosync ./cmd/portosync
 
 ### Environment Variables
 
-- `KSEI_ACCOUNTS` (required): KSEI account configurations in format "email1:password1,email2:password2"
+- `KSEI_ACCOUNTS` (required): KSEI account configurations in format "name:username:password,name2:username2:password2"
 - `KSEI_AUTH_CACHE_DIR` (optional): Directory to cache KSEI authentication tokens (default: temp directory)
 - `KSEI_PLAIN_PASSWORD` (optional): Set to "false" to use encrypted passwords (default: true)
 - `BIND_ADDR` (optional): HTTP server bind address (default: ":8080")
@@ -86,10 +86,13 @@ go build -o portosync ./cmd/portosync
 The `KSEI_ACCOUNTS` environment variable should contain comma-separated account configurations:
 
 ```
-KSEI_ACCOUNTS="your.email@example.com:yourpassword,business.email@example.com:businesspassword"
+KSEI_ACCOUNTS="personal:your.email@example.com:yourpassword,business:business.email@example.com:businesspassword"
 ```
 
-Each account configuration follows the format: `username:password`
+Each account configuration follows the format: `name:username:password`
+- `name`: A friendly name for the account (e.g., "personal", "business", "family")
+- `username`: Your KSEI AKSES email/username
+- `password`: Your KSEI AKSES password
 
 ## MCP Client Configuration
 
@@ -107,7 +110,7 @@ Add to your Claude Desktop configuration file:
       "command": "docker",
       "args": [
         "run", "--rm", "-i",
-        "-e", "KSEI_ACCOUNTS=your.email@example.com:yourpassword",
+        "-e", "KSEI_ACCOUNTS=personal:your.email@example.com:yourpassword",
         "-e", "KSEI_AUTH_CACHE_DIR=/tmp/ksei_cache",
         "ghcr.io/chickenzord/portosync:latest",
         "mcp-stdio"
@@ -126,7 +129,7 @@ Or if using a local binary:
       "command": "portosync",
       "args": ["mcp-stdio"],
       "env": {
-        "KSEI_ACCOUNTS": "your.email@example.com:yourpassword",
+        "KSEI_ACCOUNTS": "personal:your.email@example.com:yourpassword",
         "KSEI_AUTH_CACHE_DIR": "/tmp/ksei_cache"
       }
     }
@@ -144,7 +147,7 @@ Or if using a local binary:
       "command": "portosync",
       "args": ["mcp-stdio"],
       "env": {
-        "KSEI_ACCOUNTS": "your.email@example.com:yourpassword",
+        "KSEI_ACCOUNTS": "personal:your.email@example.com:yourpassword",
         "KSEI_AUTH_CACHE_DIR": "/tmp/ksei_cache"
       }
     }
@@ -167,13 +170,13 @@ Once configured with an MCP client, you can use natural language commands:
 
 ```bash
 # Set environment variables
-export KSEI_ACCOUNTS="your.email@example.com:yourpassword"
+export KSEI_ACCOUNTS="personal:your.email@example.com:yourpassword"
 export KSEI_AUTH_CACHE_DIR="/tmp/ksei_cache"
 
 # Run in stdio mode
 go run ./cmd/portosync mcp-stdio
 
-# Run in HTTP mode  
+# Run in HTTP mode
 go run ./cmd/portosync mcp-http
 ```
 

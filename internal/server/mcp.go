@@ -62,17 +62,17 @@ func (m *MCP) RunStdio(ctx context.Context) error {
 }
 
 // NewMCP creates a new MCP server using the official MCP Go SDK
-func NewMCP(accounts map[string]string, plainPassword bool, authCacheDir string) *MCP {
+func NewMCP(accounts map[string]Account, plainPassword bool, authCacheDir string) *MCP {
 	authStore, err := goksei.NewFileAuthStore(authCacheDir)
 	if err != nil {
 		panic(err)
 	}
 
 	gokseiClients := make(map[string]*goksei.Client, len(accounts))
-	for username, password := range accounts {
-		gokseiClients[username] = goksei.NewClient(goksei.ClientOpts{
-			Username:      username,
-			Password:      password,
+	for name, account := range accounts {
+		gokseiClients[name] = goksei.NewClient(goksei.ClientOpts{
+			Username:      account.Username,
+			Password:      account.Password,
 			PlainPassword: plainPassword,
 			Timeout:       1 * time.Minute,
 			AuthStore:     authStore,
