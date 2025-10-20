@@ -51,6 +51,23 @@ type GetPortfolioResult struct {
 	Balances []Balance `json:"balances" jsonschema:"description:List of account balances"`
 }
 
+type ListAccountNamesArgs struct {
+	// No parameters needed for this tool
+}
+
+type ListAccountNamesResult struct {
+	AccountNames []string `json:"account_names" jsonschema:"description:List of available account names"`
+}
+
+// Description returns a description of the ListAccountNamesResult as MCP response text
+func (r ListAccountNamesResult) Description() string {
+	if len(r.AccountNames) == 0 {
+		return "No accounts configured"
+	}
+
+	return fmt.Sprintf("Available accounts: %s", strings.Join(r.AccountNames, ", "))
+}
+
 // Description returns a description of the GetPortfolioResult as MCP response text
 func (r GetPortfolioResult) Description() string {
 	if len(r.Balances) == 0 {

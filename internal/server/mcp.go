@@ -97,6 +97,12 @@ func NewMCP(accounts map[string]Account, plainPassword bool, authCacheDir string
 		Description: "Get investment portfolio from available sources (AKSES-KSEI)",
 	}, s.handleGetPortfolio)
 
+	// Add list_account_names tool
+	mcp.AddTool(mcpServer, &mcp.Tool{
+		Name:        "list_account_names",
+		Description: "List available account names configured in the server",
+	}, s.handleListAccountNames)
+
 	s.mcpServer = mcpServer
 
 	return s
@@ -135,6 +141,20 @@ func (m *MCP) handleGetPortfolio(ctx context.Context, req *mcp.CallToolRequest, 
 	}
 
 	result.Balances = balances
+
+	return &mcp.CallToolResult{
+		Content: []mcp.Content{
+			&mcp.TextContent{
+				Text: result.Description(),
+			},
+		},
+	}, result, nil
+}
+
+func (m *MCP) handleListAccountNames(ctx context.Context, req *mcp.CallToolRequest, args ListAccountNamesArgs) (*mcp.CallToolResult, ListAccountNamesResult, error) {
+	result := ListAccountNamesResult{
+		AccountNames: m.getKseiClientNames(),
+	}
 
 	return &mcp.CallToolResult{
 		Content: []mcp.Content{

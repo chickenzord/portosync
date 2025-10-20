@@ -31,6 +31,15 @@ Retrieve portfolio balances from KSEI accounts.
 **Parameters:**
 - `account_names` (array of strings, optional): List of account names to retrieve balances from. If empty or not provided, returns balances from all configured accounts.
 
+### `list_account_names`
+List all available account names configured in the server.
+
+**Parameters:**
+- None
+
+**Returns:**
+- `account_names` (array of strings): List of configured account names that can be used with `get_portfolio`
+
 ## Installation
 
 ### Prerequisites
@@ -163,6 +172,8 @@ Once configured with an MCP client, you can use natural language commands:
 - *"What's the history of my BBCA holdings in KSEI?"*
 - *"Show balances for my personal account only"*
 - *"What stocks do I own and their current values?"*
+- *"What accounts are available?"*
+- *"List all my configured accounts"*
 
 ## Development
 
