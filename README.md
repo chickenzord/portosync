@@ -3,6 +3,7 @@
 ![MCP Server](https://badge.mcpx.dev?type=server)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/chickenzord/portosync)
 [![Go Report Card](https://goreportcard.com/badge/github.com/chickenzord/portosync)](https://goreportcard.com/report/github.com/chickenzord/portosync)
+[![codecov](https://codecov.io/github/chickenzord/portosync/graph/badge.svg?token=wmr7FbJadF)](https://codecov.io/github/chickenzord/portosync)
 ![Go Build](https://github.com/chickenzord/portosync/actions/workflows/go.yml/badge.svg?branch=main)
 ![Docker Build](https://github.com/chickenzord/portosync/actions/workflows/docker.yml/badge.svg?branch=main)
 ![Code License](https://img.shields.io/github/license/chickenzord/portosync)
