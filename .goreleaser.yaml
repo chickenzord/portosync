@@ -61,8 +61,8 @@ changelog:
       - '^test:'
       - '^ci:'
       - '^nit:'
-      - '^chore:'
-      - '^build:'
+      - '^chore(.*):'
+      - '^build(.*):'
       - Merge pull request
       - Merge branch
   groups:
