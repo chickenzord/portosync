@@ -6,19 +6,19 @@ import (
 )
 
 type GetPortfolioArgs struct {
-	AccountNames []string `json:"account_names" jsonschema:"description:List of account names, empty means all"`
+	AccountNames []string `json:"account_names" jsonschema:"description:List of specific account names to retrieve portfolio data from. Each name must match a configured account. If empty or omitted, returns portfolio data from all configured accounts. Use the list_account_names tool to discover available account names."`
 }
 
 type Balance struct {
-	SourceType    string  `json:"source_type"    jsonschema:"description:Type of the source"`
-	SourceAccount string  `json:"source_account" jsonschema:"description:Name of the source account"`
-	AssetSymbol   string  `json:"asset_symbol"   jsonschema:"description:Symbol of the asset"`
-	AssetName     string  `json:"asset_name"     jsonschema:"description:Name of the asset"`
-	AssetType     string  `json:"asset_type"     jsonschema:"description:Type of the asset"`
-	AssetSubType  string  `json:"asset_sub_type" jsonschema:"description:Sub-type of the asset"`
-	UnitsAmount   float64 `json:"units_amount"   jsonschema:"description:Amount of the asset units"`
-	UnitsValue    float64 `json:"units_value"    jsonschema:"description:Total value of the asset"`
-	UnitsCurrency string  `json:"units_currency" jsonschema:"description:Currency of the asset units"`
+	SourceType    string  `json:"source_type"    jsonschema:"description:Type of data source providing this balance (e.g., KSEI for Indonesian securities depository)"`
+	SourceAccount string  `json:"source_account" jsonschema:"description:The account name from which this balance was retrieved, matching one of the configured account names"`
+	AssetSymbol   string  `json:"asset_symbol"   jsonschema:"description:Trading symbol or ticker of the asset (e.g., BBCA for Bank Central Asia stock)"`
+	AssetName     string  `json:"asset_name"     jsonschema:"description:Full descriptive name of the asset"`
+	AssetType     string  `json:"asset_type"     jsonschema:"description:Primary classification of the asset (e.g., Stock, Bond, Mutual Fund)"`
+	AssetSubType  string  `json:"asset_sub_type" jsonschema:"description:Additional classification or subtype of the asset, providing more granular categorization"`
+	UnitsAmount   float64 `json:"units_amount"   jsonschema:"description:Quantity of asset units held in the account"`
+	UnitsValue    float64 `json:"units_value"    jsonschema:"description:Total monetary value of the asset holdings in the specified currency"`
+	UnitsCurrency string  `json:"units_currency" jsonschema:"description:Currency code for the asset value (e.g., IDR for Indonesian Rupiah, USD for US Dollar)"`
 }
 
 func (b Balance) AssetTypeFull() string {
@@ -48,24 +48,7 @@ func (b Balance) Description() string {
 }
 
 type GetPortfolioResult struct {
-	Balances []Balance `json:"balances" jsonschema:"description:List of account balances"`
-}
-
-type ListAccountNamesArgs struct {
-	// No parameters needed for this tool
-}
-
-type ListAccountNamesResult struct {
-	AccountNames []string `json:"account_names" jsonschema:"description:List of available account names"`
-}
-
-// Description returns a description of the ListAccountNamesResult as MCP response text
-func (r ListAccountNamesResult) Description() string {
-	if len(r.AccountNames) == 0 {
-		return "No accounts configured"
-	}
-
-	return fmt.Sprintf("Available accounts: %s", strings.Join(r.AccountNames, ", "))
+	Balances []Balance `json:"balances" jsonschema:"description:Array of portfolio balances across all requested accounts. Each balance represents a single asset holding with quantity and value information."`
 }
 
 // Description returns a description of the GetPortfolioResult as MCP response text
@@ -80,4 +63,21 @@ func (r GetPortfolioResult) Description() string {
 	}
 
 	return "Portfolio:\n" + strings.Join(descriptions, "\n")
+}
+
+type ListAccountNamesArgs struct {
+	// This tool requires no parameters - it returns all configured account names
+}
+
+type ListAccountNamesResult struct {
+	AccountNames []string `json:"account_names" jsonschema:"description:Array of configured account names. These names can be used as parameters when calling the get_portfolio tool to filter results by specific accounts."`
+}
+
+// Description returns a description of the ListAccountNamesResult as MCP response text
+func (r ListAccountNamesResult) Description() string {
+	if len(r.AccountNames) == 0 {
+		return "No accounts configured"
+	}
+
+	return fmt.Sprintf("Available accounts: %s", strings.Join(r.AccountNames, ", "))
 }

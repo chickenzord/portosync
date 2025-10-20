@@ -88,19 +88,37 @@ func NewMCP(accounts map[string]Account, plainPassword bool, authCacheDir string
 	mcpServer := mcp.NewServer(&mcp.Implementation{
 		Name:    "portosync",
 		Version: versionInfo.Version,
-		Title:   "PortoSync MCP Server",
+		Title:   "PortoSync - Financial Portfolio Integration Server",
 	}, nil)
 
 	// Add get_portfolio tool
+	readOnlyTrue := true
+	openWorldFalse := false
 	mcp.AddTool(mcpServer, &mcp.Tool{
 		Name:        "get_portfolio",
-		Description: "Get investment portfolio from available sources (AKSES-KSEI)",
+		Title:       "Get Portfolio Balances",
+		Description: "Retrieves current investment portfolio balances from KSEI (Indonesian Central Securities Depository) accounts. Returns detailed information about holdings including asset symbols, names, quantities, values, and currencies. Use this tool when you need to check current portfolio positions, asset allocations, or account balances. The data is fetched in real-time from KSEI AKSES and changes daily during settlement hours.",
+		Annotations: &mcp.ToolAnnotations{
+			Title:           "Get Portfolio Balances",
+			ReadOnlyHint:    true,
+			IdempotentHint:  false, // Portfolio data changes over time (daily settlement updates)
+			OpenWorldHint:   &openWorldFalse,
+			DestructiveHint: &readOnlyTrue, // false means non-destructive (inverted from ReadOnly)
+		},
 	}, s.handleGetPortfolio)
 
 	// Add list_account_names tool
 	mcp.AddTool(mcpServer, &mcp.Tool{
 		Name:        "list_account_names",
-		Description: "List available account names configured in the server",
+		Title:       "List Available Account Names",
+		Description: "Lists all account names that are currently configured in the server. Use this tool to discover which accounts are available before calling get_portfolio with specific account names. Each account name represents a separate KSEI AKSES account connection. This is useful for understanding the scope of available data and for selecting specific accounts to query.",
+		Annotations: &mcp.ToolAnnotations{
+			Title:           "List Available Account Names",
+			ReadOnlyHint:    true,
+			IdempotentHint:  true,
+			OpenWorldHint:   &openWorldFalse,
+			DestructiveHint: &readOnlyTrue, // false means non-destructive
+		},
 	}, s.handleListAccountNames)
 
 	s.mcpServer = mcpServer

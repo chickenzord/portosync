@@ -16,6 +16,7 @@ A Model Context Protocol (MCP) server that provides seamless integration with fi
 - 🚀 **Dual Mode Support** - Run via stdio (MCP standard) or HTTP server
 - 🐳 **Docker Ready** - Multi-stage Alpine-based container
 - 🔒 **Secure** - Runs as non-root user with minimal dependencies
+- 📝 **Self-Describing** - Rich tool descriptions with clear intents, parameter schemas, and behavior annotations
 
 Upcoming features
 
@@ -25,20 +26,41 @@ Upcoming features
 
 ## Tools Available
 
+The server provides self-describing tools with comprehensive metadata including clear descriptions, parameter schemas, and behavior annotations (read-only, idempotent, open-world hints). This enables AI assistants to understand tool capabilities and make informed decisions about tool usage.
+
 ### `get_portfolio`
-Retrieve portfolio balances from KSEI accounts.
+**Title:** Get Portfolio Balances
+
+Retrieves current investment portfolio balances from KSEI (Indonesian Central Securities Depository) accounts. Returns detailed information about holdings including asset symbols, names, quantities, values, and currencies.
 
 **Parameters:**
-- `account_names` (array of strings, optional): List of account names to retrieve balances from. If empty or not provided, returns balances from all configured accounts.
+- `account_names` (array of strings, optional): List of specific account names to retrieve portfolio data from. Each name must match a configured account. If empty or omitted, returns portfolio data from all configured accounts. Use the `list_account_names` tool to discover available account names.
+
+**Returns:** Array of balance objects with fields:
+- `source_type`, `source_account`: Source information
+- `asset_symbol`, `asset_name`, `asset_type`, `asset_sub_type`: Asset identification
+- `units_amount`, `units_value`, `units_currency`: Quantity and value data
+
+**Behavior Annotations:**
+- ✓ Read-only (does not modify data)
+- ✗ Non-idempotent (data changes daily during settlement hours)
+- ✗ Closed-world (accesses only your private configured accounts)
 
 ### `list_account_names`
-List all available account names configured in the server.
+**Title:** List Available Account Names
+
+Lists all account names that are currently configured in the server. Each account name represents a separate KSEI AKSES account connection.
 
 **Parameters:**
-- None
+- None (returns all configured accounts)
 
 **Returns:**
 - `account_names` (array of strings): List of configured account names that can be used with `get_portfolio`
+
+**Behavior Annotations:**
+- ✓ Read-only (does not modify data)
+- ✓ Idempotent (always returns same list)
+- ✗ Closed-world (queries internal server configuration)
 
 ## Installation
 
