@@ -1,15 +1,31 @@
 package main
 
-import "strings"
+import (
+	"strings"
 
-func parseKseiAccountsString(s string) map[string]string {
-	accounts := make(map[string]string)
+	"github.com/chickenzord/portosync/internal/server"
+)
 
-	pairs := strings.Split(s, ",")
-	for _, pair := range pairs {
-		kv := strings.SplitN(pair, ":", 2)
-		if len(kv) == 2 {
-			accounts[strings.TrimSpace(kv[0])] = strings.TrimSpace(kv[1])
+// parseKseiAccountsWithName parses a string of KSEI accounts in the format
+// "name:username:password,name2:username2:password2" and returns a map of
+// account names to Account structs containing username and password.
+func parseKseiAccountsWithName(s string) map[string]server.Account {
+	accounts := make(map[string]server.Account)
+
+	entries := strings.SplitSeq(s, ",")
+	for entry := range entries {
+		parts := strings.SplitN(entry, ":", 3)
+		if len(parts) == 3 {
+			name := strings.TrimSpace(parts[0])
+			username := strings.TrimSpace(parts[1])
+			password := strings.TrimSpace(parts[2])
+
+			if name != "" {
+				accounts[name] = server.Account{
+					Username: username,
+					Password: password,
+				}
+			}
 		}
 	}
 

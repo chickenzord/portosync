@@ -13,7 +13,7 @@ func main() {
 	ctx := context.Background()
 
 	bindAddr := os.Getenv("BIND_ADDR")
-	kseiAccounts := parseKseiAccountsString(os.Getenv("KSEI_ACCOUNTS"))
+	kseiAccounts := parseKseiAccountsWithName(os.Getenv("KSEI_ACCOUNTS"))
 	kseiPlainPassword := os.Getenv("KSEI_PLAIN_PASSWORD") != "false" // default to true
 	kseiAuthCacheDir := os.Getenv("KSEI_AUTH_CACHE_DIR")
 
