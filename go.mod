@@ -6,7 +6,7 @@ require (
 	github.com/chickenzord/goksei v0.12.0
 	github.com/modelcontextprotocol/go-sdk v1.1.0
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/sync v0.17.0
+	golang.org/x/sync v0.19.0
 )
 
 require (
